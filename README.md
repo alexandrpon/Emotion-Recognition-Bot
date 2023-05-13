@@ -1,0 +1,1 @@
+Telegram bot with pretrained machine learning model for emotion recognition task.
