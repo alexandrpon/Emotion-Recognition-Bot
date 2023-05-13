@@ -13,17 +13,23 @@ async def img_handler(message: Message, largest_photo: PhotoSize, bot: Bot):
     photo_id = largest_photo.file_id
     disk_path = "ML\Emotion_Recognition\images/" + str(photo_id) + ".jpg"
     await bot.download(file=photo_id, destination=disk_path)
-    emotion = await emo_rec_pred(disk_path)
 
-    media = [
-        InputMediaPhoto(type=InputMediaType.PHOTO, media=photo_id, caption="Оригинал"),
-        InputMediaPhoto(
-            type=InputMediaType.PHOTO,
-            media=FSInputFile(disk_path),
-            caption="Реплика",
-        ),
-    ]
-    await message.answer_media_group(media=media)
-    await message.answer(f"Эмоция: {emotion}")
+    try:
+        emotion = await emo_rec_pred(disk_path)
+        media = [
+            InputMediaPhoto(
+                type=InputMediaType.PHOTO, media=photo_id, caption="Оригинал"
+            ),
+            InputMediaPhoto(
+                type=InputMediaType.PHOTO,
+                media=FSInputFile(disk_path),
+                caption="Реплика",
+            ),
+        ]
+        await message.answer_media_group(media=media)
+        await message.answer(f"Эмоция: {emotion}")
+
+    except Exception as e:
+        await message.answer("На картинке не найдено лица")
 
     os.remove(disk_path)

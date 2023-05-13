@@ -1,26 +1,19 @@
 from ML.Emotion_Recognition.load_model import model
 from tensorflow.keras.preprocessing.image import img_to_array
+from mtcnn import MTCNN
 from PIL import Image
 import cv2
 
 
-async def predict(src):
-    src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
-    #  improves the contrast of the image
-    dst = cv2.equalizeHist(src)
+async def predict(img_path):
+    detector = MTCNN()
+    src = cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB)
+    result = detector.detect_faces(src)
 
-    # -- Detect faces
-    face_cascade = cv2.CascadeClassifier(
-        cv2.data.haarcascades + "haarcascade_frontalface_alt.xml"
-    )
-    faces = face_cascade.detectMultiScale(dst, minSize=(80, 80))
+    bounding_box = result[0]["box"]
+    x, y, w, h = bounding_box
 
-    if list(faces):
-        x, y, w, h = faces[0]
-    else:
-        x, y, w, h = (0, 0, 80, 80)
-
-    img = dst[y : y + h, x : x + w]
+    img = src[y : y + h, x : x + w]
     RGB_face = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     grey_face = RGB_face.convert("L")
     grey_face = grey_face.resize((48, 48))
@@ -41,7 +34,6 @@ async def predict(src):
 
 
 async def emo_rec_pred(img_path):
-    image = cv2.imread(img_path)
-    image_rescale, out = await predict(image)
+    image_rescale, out = await predict(img_path)
     image_rescale.save(img_path)
     return out
