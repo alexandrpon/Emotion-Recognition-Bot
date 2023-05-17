@@ -64,33 +64,33 @@ cd Emotion-Recognition-Bot
 * Create config file with your tg bot credits
 
 * With a simple 3-layer CNN, the test accuracy reached 77.4% in 25 epochs.
-  ![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/images/graph.png)
+  ![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/img/graph.png)
 
 ## Algorithm
 - First, MTCNN is used to detect faces in an image uploaded to the bot
 
 - The region of image containing the face is resized to 48x48 and is passed as input to the CNN
-![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/images/rescale.png)
+![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/img/rescale.png)
 - The network outputs a list of scores for the three classes of emotions
 
 - The emotion with maximum score is returned to user
 
 ## MTCNN
 Stage 1: The Proposal Network (P-Net)
-![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/images/pnet.png)
+![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/img/pnet.png)
 This first stage is a fully convolutional network (FCN). The difference between a CNN and a FCN is that a fully convolutional network does not use a dense layer as part of the architechture. This Proposal Network is used to obtain candidate windows and their bounding box regression vectors.
 
 Bounding box regression is a popular technique to predict the localization of boxes when the goal is detecting an object of some pre-defined class, in this case faces. After obtaining the bounding box vectors, some refinement is done to combine overlapping regions. The final output of this stage is all candidate windows after refinement to downsize the volume of candidates.
 
 Stage 2: The Refine Network (R-Net)
-![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/images/rnet.png)
+![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/img/rnet.png)
 All candidates from the P-Net are fed into the Refine Network. Notice that this network is a CNN, not a FCN like the one before since there is a dense layer at the last stage of the network architecture. The R-Net further reduces the number of candidates, performs calibration with bounding box regression and employs non-maximum suppression (NMS) to merge overlapping candidates.
 
 The R-Net outputs wether the input is a face or not, a 4 element vector which is the bounding box for the face, and a 10 element vector for facial landmark localization.
 
 Stage 3: The Output Network (O-Net)
-![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/images/onet.png)
+![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/img/onet.png)
 This stage is similar to the R-Net, but this Output Network aims to describe the face in more detail and output the five facial landmarks’ positions for eyes, nose and mouth.
 
 ## CNN
-![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/images/model_plot.png)
+![](https://github.com/alexandrpon/Emotion-Recognition-Bot/blob/master/img/model_plot.png)
