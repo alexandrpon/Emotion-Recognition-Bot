@@ -15,21 +15,22 @@ async def img_handler(message: Message, largest_photo: PhotoSize, bot: Bot):
     await bot.download(file=photo_id, destination=disk_path)
 
     try:
-        emotion = await emo_rec_pred(disk_path)
-        media = [
-            InputMediaPhoto(
-                type=InputMediaType.PHOTO, media=photo_id, caption="Оригинал"
-            ),
-            InputMediaPhoto(
-                type=InputMediaType.PHOTO,
-                media=FSInputFile(disk_path),
-                caption="Реплика",
-            ),
-        ]
-        await message.answer_media_group(media=media)
-        await message.answer(f"Эмоция: {emotion}")
+        await emo_rec_pred(disk_path)
+        # media = [
+        #     InputMediaPhoto(
+        #         type=InputMediaType.PHOTO, media=photo_id, caption="Оригинал"
+        #     ),
+        #     InputMediaPhoto(
+        #         type=InputMediaType.PHOTO,
+        #         media=FSInputFile(disk_path),
+        #         caption="Реплика",
+        #     ),
+        # ]
+        # await message.answer_media_group(media=media)
+        await message.answer_photo(FSInputFile(disk_path))
 
     except Exception as e:
+        print(e)
         await message.answer("На картинке не найдено лица")
 
     os.remove(disk_path)
