@@ -32,6 +32,9 @@ async def predict(img_path):
         emotion = mapper[expression_predict.argmax()]
         return emotion
 
+    if len(faces_detection) == 0:
+        raise
+
     faces = []
     for face in faces_detection:
         bounding_box = face["box"]
